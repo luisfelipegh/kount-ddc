@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kount DDC</title>
+</head>
+<body>
+<div class="container">
+    <h1>Kount DDC</h1>
+
+    <form id="form" onsubmit="connectToKount()">
+        <label for="clientId">Client Id:</label><br>
+        <input type="text" id="clientId" name="clientId"><br>
+        <label for="environment">Environment (TEST, PROD):</label><br>
+        <input type="text" id="environment" name="environment" value="TEST"><br><br>
+        <input type="submit" value="Conectar DDC">
+    </form>
+
+    <h3>Kount session: <span id="uuid-generated"></span></h3>
+
+    <p id="flag"></p>
+</div>
+</body>
+
+<script src="components/kount-web-client-sdk-bundle.js"></script>
+<script>
+  //Get form element
+  var form=document.getElementById("form");
+  function submitForm(event){
+
+    //Preventing page refresh
+    event.preventDefault();
+  }
+
+  //Calling a function during form submission.
+  form.addEventListener('submit', submitForm);
+
+  function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  function connectToKount() {
+    const uuid = document.getElementById('uuid-generated');
+    const flag = document.getElementById('flag');
+    uuid.innerText = ''
+    flag.innerText = ''
+
+    const sessionID = uuidv4().replace(/-/g, '');
+    const kountConfig = {
+      clientID: document.getElementById('clientId').value,
+      environment: document.getElementById('environment').value,
+      isSinglePageApp: false,
+    };
+
+    const sdk = kountSDK(kountConfig, sessionID);
+    if (sdk) {
+      uuid.innerText = sessionID;
+      flag.innerText = "Success connection with KOUNT DDC!";
+      console.log("Anti-fraud SDK activated!");
+    } else {
+      flag.innerText = "Failed connection with KOUNT DDC!";
+    }
+
+    return true
+  }
+</script>
+
+<style>
+    .container {
+        text-align: center;
+    }
+</style>
+</html>
